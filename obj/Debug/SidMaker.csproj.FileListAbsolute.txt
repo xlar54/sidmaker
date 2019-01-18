@@ -1,0 +1,13 @@
+I:\Development\CSharp Projects\SidMaker\SidMaker\bin\Debug\SidMaker.exe.config
+I:\Development\CSharp Projects\SidMaker\SidMaker\bin\Debug\SidMaker.exe
+I:\Development\CSharp Projects\SidMaker\SidMaker\bin\Debug\SidMaker.pdb
+I:\Development\CSharp Projects\SidMaker\SidMaker\bin\Debug\NAudio.dll
+I:\Development\CSharp Projects\SidMaker\SidMaker\bin\Debug\NAudio.xml
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.csprojAssemblyReference.cache
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.Form1.resources
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.Properties.Resources.resources
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.csproj.GenerateResource.cache
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.csproj.CoreCompileInputs.cache
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.csproj.CopyComplete
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.exe
+I:\Development\CSharp Projects\SidMaker\SidMaker\obj\Debug\SidMaker.pdb
