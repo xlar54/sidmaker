@@ -71,6 +71,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -89,13 +90,15 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="images\treble.png" />
+    <None Include="images\bass.png" />
     <Content Include="images\note_8th.png" />
     <Content Include="images\note_half.png" />
     <Content Include="images\note_qtr.png" />
     <Content Include="images\note_whole.png" />
     <Content Include="images\note_whole2.png" />
     <Content Include="images\play.png" />
-    <Content Include="images\treble.png" />
+    <None Include="Resources\treble.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

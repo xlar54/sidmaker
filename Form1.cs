@@ -15,9 +15,10 @@ namespace SidMaker
 {
     public partial class Form1 : Form
     {
-        Bitmap bmp = new Bitmap(320, 200);
+        Bitmap bmp = null;
         Song song = new Song();
         int editVoice = 1;
+        Note lastNote = null;
 
         public Form1()
         {
@@ -25,6 +26,7 @@ namespace SidMaker
 
             this.MouseWheel += Form_MouseWheel;
 
+            bmp = new Bitmap(pnlSheet.Width, pnlSheet.Height);
             pnlSheet.BackgroundImage = bmp;
         }
 
@@ -102,6 +104,13 @@ namespace SidMaker
             int measureStep = noteSpacing * 4 + (noteSpacing / 2);
             int measureSpacing = measureStep;
 
+            // draw treble and bass clefts
+            e.Graphics.DrawImage(SidMaker.Properties.Resources.treble, 5, 55);
+            e.Graphics.DrawLine(linePen, new Point(1, 70), new Point(1, 136));
+            e.Graphics.DrawImage(SidMaker.Properties.Resources.bass, 5, 145);
+            e.Graphics.DrawLine(linePen, new Point(1, 166), new Point(1, 230));
+            
+
             // draw treble staff lines
             for (int x = 0; x < 5; x++)
             {
@@ -119,24 +128,39 @@ namespace SidMaker
             }
 
             // draw measures
-            for (int x = 0; x < 3; x++)
+            /*for (int x = 0; x < 3; x++)
             {
                 e.Graphics.DrawLine(linePen, new Point(measureSpacing, 70), new Point(measureSpacing, pnlSheet.Size.Height));
                 measureSpacing += measureStep;
-            }
+            }*/
 
             // draw the notes
-            for (int cv = 0; cv < 3; cv++)
+            for (int currentVoice = 0; currentVoice < 3; currentVoice++)
             {
-                int xloc = 10;
+                int xloc = 60;
                 int yloc = 0;
 
-                foreach (Note n in Song.voices[cv].notes)
+                for(int i=0; i<Song.voices[currentVoice].notes.Count; i++)
                 {
+                    Note n = Song.voices[currentVoice].notes[i];
                     int noteId = getNoteID(n);
                     yloc = middleCOffset - (noteStep * noteId);
+                    Image img = getNoteImage(currentVoice + 1, n);
 
-                    e.Graphics.DrawImage(getNoteImage(cv+1,n), new Point(xloc, yloc));
+                    if (noteId > 6)
+                    {
+                        img.RotateFlip(RotateFlipType.Rotate90FlipX);
+                        img.RotateFlip(RotateFlipType.Rotate90FlipY);
+                        yloc = yloc + img.Height-lineStep;
+                    }
+
+                    e.Graphics.DrawImage(img, new Point(xloc, yloc));
+
+                    if(editVoice-1 == currentVoice && i == Song.voices[currentVoice].notes.Count-1)
+                    {
+                        // draw current note marker
+                        e.Graphics.DrawImage(imageList1.Images[0], new Point(xloc+img.Width/2 - imageList1.Images[0].Width/2, 5));
+                    }
 
                     if (noteId == 0)
                     {
@@ -171,6 +195,7 @@ namespace SidMaker
                     xloc += noteSpacing;
                 }
             }
+
         }
 
         private int getNoteID(Note n)
@@ -338,13 +363,24 @@ namespace SidMaker
 
         private void RenderNote(NoteTypes type, Waveforms waveform)
         {
-            Note note = new Note(NoteName.E, type, waveform, 4);
+            NoteName newNoteName = NoteName.E;
+            int octave = 4;
+
+            if(lastNote != null)
+            {
+                newNoteName = lastNote.name;
+                octave = lastNote.octave;
+            }
+
+            Note note = new Note(newNoteName, type, waveform, octave);
             song.AddNote(editVoice-1, note);
+
+            lastNote = note;
 
             pnlSheet.Invalidate();
 
             Song.tempo = Convert.ToInt32(numTempo.Value);
-            note = new Note(NoteName.E, NoteTypes.eighth, waveform, 4);
+            note = new Note(newNoteName, NoteTypes.eighth, waveform, octave);
             Song.PlaySingleNote(note);
         }
 
@@ -380,19 +416,31 @@ namespace SidMaker
         private void btnVoice1_Click(object sender, EventArgs e)
         {
             editVoice = 1;
-            btnVoice1.BackColor = Color.Yellow;
+            btnVoice1.BackColor = Color.Blue;
             btnVoice2.BackColor = Color.LightGray;
             btnVoice3.BackColor = Color.LightGray;
             btnVoice4.BackColor = Color.LightGray;
+
+            btnVoice1.ForeColor = Color.White;
+            btnVoice2.ForeColor = Color.Black;
+            btnVoice3.ForeColor = Color.Black;
+            btnVoice4.ForeColor = Color.Black;
+            pnlSheet.Invalidate();
         }
 
         private void btnVoice2_Click(object sender, EventArgs e)
         {
             editVoice = 2;
             btnVoice1.BackColor = Color.LightGray;
-            btnVoice2.BackColor = Color.Yellow;
+            btnVoice2.BackColor = Color.Red;
             btnVoice3.BackColor = Color.LightGray;
             btnVoice4.BackColor = Color.LightGray;
+
+            btnVoice1.ForeColor = Color.Black;
+            btnVoice2.ForeColor = Color.White;
+            btnVoice3.ForeColor = Color.Black;
+            btnVoice4.ForeColor = Color.Black;
+            pnlSheet.Invalidate();
         }
 
         private void btnVoice3_Click(object sender, EventArgs e)
@@ -400,8 +448,14 @@ namespace SidMaker
             editVoice = 3;
             btnVoice1.BackColor = Color.LightGray;
             btnVoice2.BackColor = Color.LightGray;
-            btnVoice3.BackColor = Color.Yellow;
+            btnVoice3.BackColor = Color.Green;
             btnVoice4.BackColor = Color.LightGray;
+
+            btnVoice1.ForeColor = Color.Black;
+            btnVoice2.ForeColor = Color.Black;
+            btnVoice3.ForeColor = Color.White;
+            btnVoice4.ForeColor = Color.Black;
+            pnlSheet.Invalidate();
         }
 
         private void btnVoice4_Click(object sender, EventArgs e)
@@ -411,8 +465,8 @@ namespace SidMaker
             btnVoice2.BackColor = Color.LightGray;
             btnVoice3.BackColor = Color.LightGray;
             btnVoice4.BackColor = Color.Yellow;
+            pnlSheet.Invalidate();
         }
         #endregion
-
     }
 }
