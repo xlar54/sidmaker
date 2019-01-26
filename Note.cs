@@ -159,6 +159,7 @@ namespace SidMaker
         public NoteTypes type;
         public Waveforms waveform;
         public int octave;
+        public bool selected = false;
 
         public double frequency
         {

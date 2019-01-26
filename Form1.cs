@@ -19,6 +19,7 @@ namespace SidMaker
         Song song = new Song();
         int editVoice = 1;
         Note lastNote = null;
+        int selectedNote = -1;
 
         public Form1()
         {
@@ -32,7 +33,18 @@ namespace SidMaker
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            foreach (Control control in this.Controls)
+            {
+                control.PreviewKeyDown += new PreviewKeyDownEventHandler(control_PreviewKeyDown);
+            }
+        }
 
+        void control_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+            {
+                e.IsInputKey = true;
+            }
         }
 
         void Form_MouseWheel(object sender, MouseEventArgs e)
@@ -44,51 +56,51 @@ namespace SidMaker
 
                 if (e.Delta > 0)
                 {
-                    if (Song.voices[cv].notes.Last().name == NoteName.C)
-                        Song.voices[cv].notes.Last().name = NoteName.D;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.D)
-                        Song.voices[cv].notes.Last().name = NoteName.E;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.E)
-                        Song.voices[cv].notes.Last().name = NoteName.F;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.F)
-                        Song.voices[cv].notes.Last().name = NoteName.G;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.G)
-                        Song.voices[cv].notes.Last().name = NoteName.A;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.A)
-                        Song.voices[cv].notes.Last().name = NoteName.B;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.B)
+                    if (Song.voices[cv].notes[selectedNote].name == NoteName.C)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.D;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.D)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.E;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.E)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.F;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.F)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.G;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.G)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.A;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.A)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.B;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.B)
                     {
-                        Song.voices[cv].notes.Last().octave++;
-                        Song.voices[cv].notes.Last().name = NoteName.C;
+                        Song.voices[cv].notes[selectedNote].octave++;
+                        Song.voices[cv].notes[selectedNote].name = NoteName.C;
                     }
                 }
 
                 if (e.Delta < 0)
                 {
-                    if (Song.voices[cv].notes.Last().name == NoteName.B)
-                        Song.voices[cv].notes.Last().name = NoteName.A;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.A)
-                        Song.voices[cv].notes.Last().name = NoteName.G;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.G)
-                        Song.voices[cv].notes.Last().name = NoteName.F;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.F)
-                        Song.voices[cv].notes.Last().name = NoteName.E;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.E)
-                        Song.voices[cv].notes.Last().name = NoteName.D;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.D)
-                        Song.voices[cv].notes.Last().name = NoteName.C;
-                    else if (Song.voices[cv].notes.Last().name == NoteName.C)
+                    if (Song.voices[cv].notes[selectedNote].name == NoteName.B)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.A;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.A)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.G;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.G)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.F;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.F)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.E;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.E)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.D;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.D)
+                        Song.voices[cv].notes[selectedNote].name = NoteName.C;
+                    else if (Song.voices[cv].notes[selectedNote].name == NoteName.C)
                     {
-                        Song.voices[cv].notes.Last().octave--;
-                        Song.voices[cv].notes.Last().name = NoteName.B;
+                        Song.voices[cv].notes[selectedNote].octave--;
+                        Song.voices[cv].notes[selectedNote].name = NoteName.B;
                     }
                 }
 
                 pnlSheet.Invalidate();
 
                 Song.tempo = Convert.ToInt32(numTempo.Value);
-                Note note = new Note(Song.voices[cv].notes.Last().name, NoteTypes.eighth, Song.voices[cv].notes.Last().waveform, Song.voices[cv].notes.Last().octave);
-                Song.PlaySingleNote(note);
+                Note note = new Note(Song.voices[cv].notes[selectedNote].name, NoteTypes.eighth, Song.voices[cv].notes[selectedNote].waveform, Song.voices[cv].notes[selectedNote].octave);
+                Song.PlaySingle(note);
 
             }
         }
@@ -106,9 +118,8 @@ namespace SidMaker
 
             // draw treble and bass clefts
             e.Graphics.DrawImage(SidMaker.Properties.Resources.treble, 5, 55);
-            e.Graphics.DrawLine(linePen, new Point(1, 70), new Point(1, 136));
+            e.Graphics.DrawLine(linePen, new Point(1, 70), new Point(1, 230));
             e.Graphics.DrawImage(SidMaker.Properties.Resources.bass, 5, 145);
-            e.Graphics.DrawLine(linePen, new Point(1, 166), new Point(1, 230));
             
 
             // draw treble staff lines
@@ -156,7 +167,7 @@ namespace SidMaker
 
                     e.Graphics.DrawImage(img, new Point(xloc, yloc));
 
-                    if(editVoice-1 == currentVoice && i == Song.voices[currentVoice].notes.Count-1)
+                    if(editVoice-1 == currentVoice && i == selectedNote) //Song.voices[currentVoice].notes.Count-1)
                     {
                         // draw current note marker
                         e.Graphics.DrawImage(imageList1.Images[0], new Point(xloc+img.Width/2 - imageList1.Images[0].Width/2, 5));
@@ -376,6 +387,7 @@ namespace SidMaker
             song.AddNote(editVoice-1, note);
 
             lastNote = note;
+            selectedNote++;
 
             pnlSheet.Invalidate();
 
@@ -425,6 +437,9 @@ namespace SidMaker
             btnVoice2.ForeColor = Color.Black;
             btnVoice3.ForeColor = Color.Black;
             btnVoice4.ForeColor = Color.Black;
+
+            selectedNote = Song.voices[editVoice-1].notes.Count-1;
+
             pnlSheet.Invalidate();
         }
 
@@ -440,6 +455,9 @@ namespace SidMaker
             btnVoice2.ForeColor = Color.White;
             btnVoice3.ForeColor = Color.Black;
             btnVoice4.ForeColor = Color.Black;
+
+            selectedNote = Song.voices[editVoice - 1].notes.Count-1;
+
             pnlSheet.Invalidate();
         }
 
@@ -455,6 +473,9 @@ namespace SidMaker
             btnVoice2.ForeColor = Color.Black;
             btnVoice3.ForeColor = Color.White;
             btnVoice4.ForeColor = Color.Black;
+
+            selectedNote = Song.voices[editVoice - 1].notes.Count-1;
+
             pnlSheet.Invalidate();
         }
 
@@ -465,8 +486,52 @@ namespace SidMaker
             btnVoice2.BackColor = Color.LightGray;
             btnVoice3.BackColor = Color.LightGray;
             btnVoice4.BackColor = Color.Yellow;
+
+            selectedNote = Song.voices[editVoice - 1].notes.Count-1;
+
             pnlSheet.Invalidate();
         }
         #endregion
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            int cv = editVoice - 1;
+
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (selectedNote > -1)
+                {
+                    if (selectedNote == Song.voices[cv].notes.Count - 1)
+                    {
+                        Song.voices[cv].notes.RemoveAt(selectedNote);
+                        selectedNote--;
+                    }
+                    else if(selectedNote < Song.voices[cv].notes.Count - 1)
+                    {
+                        Song.voices[cv].notes.RemoveAt(selectedNote);
+
+                    }
+                    pnlSheet.Invalidate();
+                }
+            }
+
+            if(e.KeyCode == Keys.Left)
+            {
+                if (selectedNote > 0)
+                {
+                    selectedNote--;
+                    pnlSheet.Invalidate();
+                }
+            }
+
+            if (e.KeyCode == Keys.Right)
+            {
+                if (selectedNote < Song.voices[cv].notes.Count-1)
+                {
+                    selectedNote++;
+                    pnlSheet.Invalidate();
+                }
+            }
+        }
     }
 }

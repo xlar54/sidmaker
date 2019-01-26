@@ -41,7 +41,7 @@ namespace SidMaker
             t2.Start(2);
         }
 
-        public void PlaySingle(Note n)
+        public static void PlaySingle(Note n)
         {
             Thread t = new Thread(new ParameterizedThreadStart(PlaySingleNote));
             t.Start(n);
